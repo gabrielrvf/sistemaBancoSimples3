@@ -61,7 +61,3 @@ SEU NOVO SALDO É DE R$ 5550.00
 ## Autor
 Gabriel Rosa Vilarouca Farias  
 Desenvolvido para o Centro Universitário do Distrito Federal (UDF), turma de Ciências da Computação, matéria Programação de Computadores com a docente Karla Roberto Sartin.
-
---- 
-
-Se precisar de mais alguma coisa, me avise!
