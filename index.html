@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BANCO UDF</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            width: 400px;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 600;
+            color: #1d1d1f;
+            font-weight: bold;
+        }
+
+        .saldo {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #007aff;
+            font-weight: bold;
+        }
+
+        .investi {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #6e0594;
+        }
+
+        .buttons button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 150px;
+            font-size: 16px;
+        }
+
+        .buttons button:hover {
+            background: #005ecb;
+        }
+
+        .input-box {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .input-box input {
+            width: 80%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #d1d1d6;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .confirmar {
+            margin-top: 10px;
+            border-radius: 10px;
+            font-size: 20px;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            background: #34c759;
+        }
+
+        .confirmar:hover {
+            background: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>BANCO UDF</h1>
+        <div class="saldo">Saldo: R$ <span id="saldo">1000.00</span></div>
+        <div class="investi"><span id="investi"></span></div>
+        <div class="buttons">
+            <button onclick="toggleInput('deposito')">Depositar</button>
+            <button onclick="toggleInput('saque')">Sacar</button>
+            <button onclick="toggleInput('investir')">Investir</button>
+        </div>
+
+        <div id="deposito" class="input-box">
+            <input type="number" id="valorDeposito" placeholder="Valor do depósito">
+            <button class="confirmar" onclick="depositar()">Confirmar</button>
+        </div>
+        <div id="saque" class="input-box">
+            <input type="number" id="valorSaque" placeholder="Valor do saque">
+            <button class="confirmar" onclick="sacar()">Confirmar</button>
+        </div>
+        <div id="investir" class="input-box">
+            <select id="tipoInvestimento">
+                <option value="Tesouro">Tesouro Direto</option>
+                <option value="CDB">CDB</option>
+                <option value="Poupanca">Poupança</option>
+            </select>
+            <input type="number" id="valorInvestimento" placeholder="Valor do investimento">
+            <button class="confirmar" onclick="investir()">Confirmar</button>
+        </div>
+    </div>
+
+    <script>
+        // Definição das variáveis iniciais
+        let saldo = 5000; // Saldo inicial
+        let limiteSaque = 2000; // Limite diário de saque
+        const tesouroDireto = 5.75; // Taxa de rendimento do Tesouro Direto (% ao mês)
+        const poupanca = 1.30; // Taxa de rendimento da Poupança (% ao mês)
+        const cdb = 20.52; // Taxa de rendimento do CDB (% ao mês)
+
+        // Exibe o saldo inicial
+        document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+        // Função para esconder e mostrar os campos de input
+        function toggleInput(id) {
+            document.querySelectorAll('.input-box').forEach(el => el.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // Função para realizar o saque
+        function sacar() {
+            let valor = parseFloat(document.getElementById('valorSaque').value);
+            if (valor <= 0) {
+                alert("! OPERAÇÃO INVÁLIDA, VALOR DE SAQUE INVALIDO");
+            } else if (valor > saldo) {
+                alert("! OPERAÇÃO INVÁLIDA, SALDO INSUFICIENTE");
+            } else if (valor > limiteSaque) {
+                alert("! OPERAÇÃO INVÁLIDA, LIMITE DE SAQUE DIÁRIO ATINGIDO");
+            } else {
+                saldo -= valor;
+                limiteSaque -= valor; // Reduz o limite de saque diário
+                document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+                document.getElementById('limiteSaque').textContent = limiteSaque.toFixed(2);
+            }
+            document.getElementById('saque').style.display = 'none';
+        }
+
+        // Função para realizar o depósito
+        function depositar() {
+            let valor = parseFloat(document.getElementById('valorDeposito').value);
+            if (valor > 0) {
+                saldo += valor;
+                document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+            }
+            document.getElementById('deposito').style.display = 'none';
+        }
+
+        // Função para realizar o investimento
+        function investir() {
+            let valor = parseFloat(document.getElementById('valorInvestimento').value);
+            let tipo = document.getElementById('tipoInvestimento').value;
+
+            if (valor > 0 && valor <= saldo) {
+                saldo -= valor; // Deduz o valor investido do saldo
+                let rendimento = 0;
+
+                if (tipo === "Tesouro") {
+                    rendimento = valor * (tesouroDireto / 100); // Rendimento do Tesouro Direto
+                } else if (tipo === "Poupanca") {
+                    rendimento = valor * (poupanca / 100); // Rendimento da Poupança
+                } else if (tipo === "CDB") {
+                    rendimento = valor * (cdb / 100); // Rendimento do CDB
+                }
+
+                saldo += valor + rendimento; // Atualiza o saldo com o valor investido e o rendimento
+                document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+                document.getElementById('investi').textContent = "Investido: R$ " + valor.toFixed(2) + " em " + tipo + " (Rendimento: R$ " + rendimento.toFixed(2) + ")";
+            } else {
+                alert("! OPERAÇÃO INVÁLIDA, VALOR DE INVESTIMENTO INVÁLIDO OU SALDO INSUFICIENTE");
+            }
+
+            document.getElementById('investir').style.display = 'none';
+        }
+    </script>
+
+</body>
+
+</html>
