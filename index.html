@@ -18,7 +18,7 @@
 
         .container {
             background: white;
-            width: 400px;
+            width: 500px;
             padding: 20px;
             border-radius: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -26,7 +26,7 @@
         }
 
         h1 {
-            font-size: 30px;
+            font-size: 20px;
             font-weight: 600;
             color: #1d1d1f;
             font-weight: bold;
@@ -96,7 +96,10 @@
 
 <body>
     <div class="container">
+        <img src="imgs/logo.png" alt="Banco UDF" width="400" height="200" style="margin-bottom: 20px;">
+        <br>
         <h1>BANCO UDF</h1>
+        <h1 id="titulo"></h1>
         <div class="saldo">Saldo: R$ <span id="saldo">1000.00</span></div>
         <div class="investi"><span id="investi"></span></div>
         <div class="buttons">
@@ -131,9 +134,12 @@
         const tesouroDireto = 5.75; // Taxa de rendimento do Tesouro Direto (% ao mês)
         const poupanca = 1.30; // Taxa de rendimento da Poupança (% ao mês)
         const cdb = 20.52; // Taxa de rendimento do CDB (% ao mês)
+        let nome = "Gabriel Rosa" // Nome do cliente
 
         // Exibe o saldo inicial
         document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+        // Exibe o nome do cliente
+        document.getElementById('titulo').textContent = "Boas vindas, " + nome;
         // Função para esconder e mostrar os campos de input
         function toggleInput(id) {
             document.querySelectorAll('.input-box').forEach(el => el.style.display = 'none');
@@ -143,35 +149,40 @@
         // Função para realizar o saque
         function sacar() {
             let valor = parseFloat(document.getElementById('valorSaque').value);
-            if (valor <= 0) {
-                alert("! OPERAÇÃO INVÁLIDA, VALOR DE SAQUE INVALIDO");
+            document.getElementById('saque').style.display = 'none';
+            if (isNaN(valor)) {
+                alert("OPERAÇÃO INVÁLIDA\nVALOR DE SAQUE INVALIDO");
+            }else if (valor <= 0) {
+                alert("OPERAÇÃO INVÁLIDA\nVALOR DE SAQUE INVALIDO");
             } else if (valor > saldo) {
-                alert("! OPERAÇÃO INVÁLIDA, SALDO INSUFICIENTE");
+                alert("OPERAÇÃO INVÁLIDA\nSALDO INSUFICIENTE");
             } else if (valor > limiteSaque) {
-                alert("! OPERAÇÃO INVÁLIDA, LIMITE DE SAQUE DIÁRIO ATINGIDO");
+                alert("OPERAÇÃO INVÁLIDA\nLIMITE DE SAQUE DIÁRIO ATINGIDO");
             } else {
                 saldo -= valor;
                 limiteSaque -= valor; // Reduz o limite de saque diário
                 document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
                 document.getElementById('limiteSaque').textContent = limiteSaque.toFixed(2);
             }
-            document.getElementById('saque').style.display = 'none';
         }
 
         // Função para realizar o depósito
         function depositar() {
             let valor = parseFloat(document.getElementById('valorDeposito').value);
+            document.getElementById('deposito').style.display = 'none';
             if (valor > 0) {
                 saldo += valor;
                 document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
+            }else{
+                alert("OPERAÇÃO INVÁLIDA\nVALOR DE DEPÓSITO INVALIDO");
             }
-            document.getElementById('deposito').style.display = 'none';
         }
 
         // Função para realizar o investimento
         function investir() {
             let valor = parseFloat(document.getElementById('valorInvestimento').value);
             let tipo = document.getElementById('tipoInvestimento').value;
+            document.getElementById('investir').style.display = 'none';
 
             if (valor > 0 && valor <= saldo) {
                 saldo -= valor; // Deduz o valor investido do saldo
@@ -187,12 +198,10 @@
 
                 saldo += valor + rendimento; // Atualiza o saldo com o valor investido e o rendimento
                 document.getElementById('saldo').textContent = saldo.toFixed(2) + " | Limite Saque: " + limiteSaque.toFixed(2);
-                document.getElementById('investi').textContent = "Investido: R$ " + valor.toFixed(2) + " em " + tipo + " (Rendimento: R$ " + rendimento.toFixed(2) + ")";
+                document.getElementById('investi').textContent = "Investido: R$ " + valor.toFixed(2) + " em " + tipo + "\n(Rendimento: R$ " + rendimento.toFixed(2) + ")";
             } else {
-                alert("! OPERAÇÃO INVÁLIDA, VALOR DE INVESTIMENTO INVÁLIDO OU SALDO INSUFICIENTE");
+                alert("OPERAÇÃO INVÁLIDA\nVALOR DE INVESTIMENTO INVÁLIDO OU SALDO INSUFICIENTE");
             }
-
-            document.getElementById('investir').style.display = 'none';
         }
     </script>
 
